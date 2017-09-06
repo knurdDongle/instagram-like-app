@@ -1,0 +1,46 @@
+body {
+	background: #fafafa;
+}
+.profile_pic {
+	margin: 10px;
+	width: 300px;
+	height: 300px;
+}
+
+input.form-control {
+	margin-top: 10px;
+}
+
+header {
+	position: fixed;
+	height: 75px;
+	width: 100%;
+	z-index: 100000;
+	display: block;
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+}
+
+header .menu {
+	margin-top: 17px;
+}
+
+header .menu a {
+	margin: 5px;
+	float: right !important;
+	padding: 10px 15px;
+	border-bottom: 1px solid #ccc;
+}
+
+div.wrapper {
+	padding-top: 120px;
+	padding-left: 100px;
+	padding-right: 100px;
+}
+
+img.avatar {
+	width: 150px;
+	height: 150px;
+	border: 1px solid transparent;
+	border-radius: 50%;
+}
