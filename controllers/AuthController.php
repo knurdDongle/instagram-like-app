@@ -18,16 +18,16 @@ class AuthController
 				
 				header("Location: /" . $data['username']);
 			}	
+		} else {
+			$view = new View('index/index');
 		}
 
-		header("Location: /auth");
 		return true;
 	}
 
 	public function actionLogin()
 	{
-		if (isset($_POST['login']))
-		{
+		if (isset($_POST['login'])) {
 			$data = array(
 				'username' => $_POST['username'],
 				'password' => md5(HASH_PASSWORD_KEY) . md5($_POST['password'])

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Загружает все .php-файлы
+ * 
  * @param string $class_name имя класса
  */
 function __autoload($class_name)
