@@ -9,7 +9,7 @@ return array(
 	# User actions
 	'unsubscribe/([a-zA-Z0-9]+)' => 'profile/unsubscribe/$1',
 	'subscribe/([a-zA-Z0-9]+)' => 'profile/subscribe/$1',
-	'photo/([0-9]+)' => 'profile/photo/$1',
+	'photo/([0-9]+)' => 'profile/viewphoto/$1',
 	'cabinet/addimage' => 'profile/addimage',
 	'account/edit' => 'profile/edit',
 	'([a-zA-Z0-9]+)' => 'profile/profile/$1',

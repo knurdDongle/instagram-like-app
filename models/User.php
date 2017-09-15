@@ -10,6 +10,8 @@ class User extends Model
 	public static function getInfo($username)
 	{
 		try {
+			$user = self::getIdByUsername($username);
+
 			return parent::db()->run('
 				SELECT 
 					id, 
@@ -20,7 +22,7 @@ class User extends Model
 		    		ifnull((SELECT COUNT(*) FROM subscribes WHERE user = ?), 0) as subscribers,
 		    		ifnull((SELECT COUNT(*) FROM subscribes WHERE subscriber = ?), 0) as followings
 				FROM users 
-				WHERE username = ?', array($username, $username, $username)
+				WHERE username = ?', array($user, $user, $username)
 			)->fetch(PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
 			die('Database error: ' . $e->getMessage());
@@ -44,17 +46,61 @@ class User extends Model
 		return false;
 	}
 
+	public static function getFollowingPosts($username)
+	{
+		$sql = parent::db()->run('
+			SELECT 
+				ui.`id` , 
+				ui.`image`, 
+				ui.`likes`, 
+				ui.`owner`,
+				ui.`creation_date`
+			FROM 
+				`user_images` ui
+				LEFT JOIN `subscribes` f ON (ui.`owner` = f.`user`)
+			WHERE
+				f.`subscriber` = ?
+			ORDER by
+				ui.`creation_date`', array(self::getIdByUsername($username))
+		);
+
+		$i = 0;
+		$posts = array();
+
+		while ($query = $sql->fetch()) {
+			$posts[$i]['id'] = $query['id'];
+			$posts[$i]['image'] = $query['image'];
+			$posts[$i]['likes'] = $query['likes'];
+			$posts[$i]['owner'] = $query['owner'];
+			$posts[$i]['avatar'] = self::getAvatarById($query['owner']);
+			$posts[$i]['owner_username'] = self::getUsernameById($query['owner']);
+			$posts[$i]['image_href'] = Functions::removeExtension($query['image']);
+			$posts[$i]['creation_date'] = Functions::ceilTime($query['creation_date']);
+			$i++;
+		}
+
+		return $posts;
+	}	
+
 	/**
 	 * Function gets user's id by username
 	 * 
 	 * @return integer
 	 */
-	public static function getUserId($username)
+	public static function getUsernameById($id)
+	{
+		return parent::db()->run('SELECT username FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
+	}
+
+	public static function getIdByUsername($username) 
 	{
 		return parent::db()->run('SELECT id FROM users WHERE username = ? LIMIT 1', array($username))->fetchColumn();
 	}
 
-
+	public static function getAvatarById($id)
+	{
+		return parent::db()->run('SELECT avatar FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
+	}
 
 	/**
 	 * Function checks whether the user subscriber of another user or not
@@ -64,12 +110,17 @@ class User extends Model
 	 */
 	public static function getSubscribed($subscriber, $user) 
 	{
+		$user = self::getIdByUsername($user);
+		$subscriber = self::getIdByUsername($subscriber);
+
 		if (parent::db()->run('SELECT 1 FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $subscriber))->fetch()) {
 			return true;
 		}
 
 		return false;
 	}
+
+	
 
 	/**
 	 * Subscribe function 
@@ -79,7 +130,10 @@ class User extends Model
 	 */
 	public static function subscribe($current_user, $user)
 	{
-		return parent::db()->run('INSERT INTO subscribes (id, user, subscriber) VALUES ("", ?, ?)', array($user, $current_user));
+		$user = self::getIdByUsername($user);
+		$subscriber = self::getIdByUsername($current_user);
+
+		return parent::db()->run('INSERT INTO subscribes (id, user, subscriber) VALUES ("", ?, ?)', array($user, $subscriber));
 	}
 
 	/**
@@ -90,7 +144,10 @@ class User extends Model
 	 */
 	public static function unsubscribe($current_user, $user) 
 	{
-		return parent::db()->run('DELETE FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $current_user));
+		$user = self::getIdByUsername($user);
+		$subscriber = self::getIdByUsername($current_user);
+
+		return parent::db()->run('DELETE FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $subscriber));
 	}
 
 	/**
@@ -125,8 +182,8 @@ class User extends Model
 	 */
 	public static function addImage($image, $username)
 	{
-		if ($userId = parent::db()->run('SELECT id FROM users WHERE username = ? LIMIT 1', array($username))->fetchColumn()) {
-			return parent::db()->run('INSERT INTO user_images (id, image, owner, creation_date) VALUES("", ?, ?, NOW())', array($image, $userId));
+		if ($user = self::getIdByUsername($username)) {
+			return parent::db()->run('INSERT INTO user_images (id, image, owner, creation_date) VALUES("", ?, ?, NOW())', array($image, $user));
 		}
 	}
 

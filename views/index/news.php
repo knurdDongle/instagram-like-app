@@ -18,6 +18,10 @@
 		margin-top: 100px;
 	}
 
+	.item:last-child {
+		margin-bottom: 40px;
+	}
+
 	.item h1 {
 		font-family: 'Helvetica', sans-serif;
 	}
@@ -46,6 +50,10 @@
 		display: inline;
 		vertical-align: top;
 	}
+	.item-creating_date {
+		vertical-align: bottom;
+		margin-left: -36px;
+	}
 	</style>
 </head>
 <body>
@@ -53,28 +61,21 @@
 
 	<div class="wrapper">
 		<div class="items_list">
+		<?php foreach ($posts as $post): ?>
 			<div class="item">
 				<div class="item-user">
 					<div class="item-avatar">
-						<img src="images/1501606434.jpg">
+						<img src="images/<?= $post['avatar']; ?>">
 					</div>
-					<span class="item-username">arianagrande</span>
+					<span class="item-username"><?= $post['owner_username']; ?></span>
+					<span class="item-creating_date"><?= $post['creation_date']; ?></span>
 				</div>
 
 				<div class="item-photo">
-					<img src="images/1501606434.jpg">
+					<a href="photo/<?=$post['image_href'];?>"><img src="images/<?= $post['image']; ?>"></a>
 				</div>
 			</div>
-
-			<div class="item">
-				<div class="item-photo">
-					
-				</div>
-
-				<div class="item-user">
-					
-				</div>
-			</div>
+		<?php endforeach; ?>
 		</div>
 	</div>
 </body>

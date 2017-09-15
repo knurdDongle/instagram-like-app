@@ -16,7 +16,7 @@ class ProfileController
 			$images = User::getProfileImages($userInfo['id']);
 			$subscriber = 0;
 
-			if ($_SESSION['username']) {
+			if (isset($_SESSION['username'])) {
 				$subscriber = User::getSubscribed($_SESSION['username'], $user);
 			}
 
@@ -67,7 +67,6 @@ class ProfileController
 		}
 	}
 
-
 	/**
 	 * Upload an image
 	 * 
@@ -84,11 +83,11 @@ class ProfileController
 
 	        $path = ROOT_PATH . '/images/';
 
-	        $fileName = time() . '.' . $ext;
+	        $fileName = time() . '.' . 'png';
 	        $filePath = $path . $fileName;
 
 	        if (move_uploaded_file($_FILES['image']['tmp_name'], $filePath)) {
-	        	Functions::imageresize($filePath, 600, 600, $ext);
+	        	Functions::imageresize($filePath, $ext);
                 User::addImage($fileName, $_SESSION['username']);
 	        }
 	    }
@@ -98,13 +97,27 @@ class ProfileController
 	}
 
 	/**
+	 * Remove image
+	 * 
+	 * @return boolean
+	 */
+	public function actionRemoveimage()
+	{
+		if (isset($_POST['removephoto'])) {
+			if ($_SESSION['username'] == $_POST['owner']) {
+
+			}
+		}
+	}
+
+	/**
 	 * @todo Currently work only with .jpg
 	 * @return boolean
 	 */
-	public function actionPhoto($photo) 
+	public function actionViewphoto($photo) 
 	{
 		$photoInfo = array();
-		$photo = $photo . '.jpg';
+		$photo .= '.png';
 
 		if ($photoInfo = User::getPhoto($photo)) {
 			$view = new View('photo/index');
@@ -123,12 +136,12 @@ class ProfileController
 	 */
 	public function actionSubscribe($user)
 	{
-		if ($_SESSION['username']) {
+		if (isset($_SESSION['username'])) {
 			if (User::subscribe($_SESSION['username'], $user)) {
 				header("Location: /" . $user);
 			}
 		}
-
+		else { header("Location: /"); }
 		return true;
 	}
 
@@ -146,6 +159,7 @@ class ProfileController
 			}
 		}
 
+		else {header("Location: /");}
 		return true;
 	}
 }
