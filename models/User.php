@@ -46,6 +46,56 @@ class User extends Model
 		return false;
 	}
 
+	public static function getFollowings($username)
+	{
+		$followings = array();
+		$i = 0;
+		$sql = parent::db()->run('
+			SELECT 
+				f.`user`,
+				u.`avatar`,
+				u.`username`
+			FROM 
+				`subscribes` f
+				LEFT JOIN `users` u ON (f.`user` = u.`id`) 
+			WHERE 
+				f.`subscriber` = ?', array(self::getIdByUsername($username)));
+
+		while ($result = $sql->fetch()) {
+			$followings[$i]['user'] = $result['user'];
+			$followings[$i]['avatar'] = $result['avatar'];
+			$followings[$i]['username'] = $result['username'];
+			$followings[$i]['subscribed'] = self::getSubscribed($_SESSION['username'], $result['username']);
+			$i++;
+		}
+
+		return $followings;
+	}
+
+	public static function getSubscribers($username)
+	{
+		$subscribers = array();
+		$i = 0;
+		$sql = parent::db()->run('
+			SELECT 
+				u.`avatar`,
+				u.`username`
+			FROM
+				`subscribes` f
+				LEFT JOIN `users` u ON (f.`subscriber` = u.`id`)
+			WHERE
+				f.`user` = ?', array(self::getIdByUsername($username)));
+
+		while ($result = $sql->fetch()) {
+			$subscribers[$i]['avatar'] = $result['avatar'];
+			$subscribers[$i]['username'] = $result['username'];
+			$subscribers[$i]['subscribed'] = self::getSubscribed($_SESSION['username'], $result['username']);
+			$i++;
+		}
+
+		return $subscribers;
+	}
+
 	public static function getFollowingPosts($username)
 	{
 		$sql = parent::db()->run('
@@ -61,7 +111,8 @@ class User extends Model
 			WHERE
 				f.`subscriber` = ?
 			ORDER by
-				ui.`creation_date`', array(self::getIdByUsername($username))
+				ui.`creation_date`
+			DESC', array(self::getIdByUsername($username))
 		);
 
 		$i = 0;
@@ -83,8 +134,7 @@ class User extends Model
 	}	
 
 	/**
-	 * Function gets user's id by username
-	 * 
+	 * Function gets user's username by id
 	 * @return integer
 	 */
 	public static function getUsernameById($id)
@@ -92,11 +142,19 @@ class User extends Model
 		return parent::db()->run('SELECT username FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
 	}
 
+	/**
+	 * Function gets user's id by username
+	 * @return boolean
+	 */
 	public static function getIdByUsername($username) 
 	{
 		return parent::db()->run('SELECT id FROM users WHERE username = ? LIMIT 1', array($username))->fetchColumn();
 	}
 
+	/**
+	 * Function gets user's avatar by id
+	 * @return boolean
+	 */
 	public static function getAvatarById($id)
 	{
 		return parent::db()->run('SELECT avatar FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
@@ -119,8 +177,6 @@ class User extends Model
 
 		return false;
 	}
-
-	
 
 	/**
 	 * Subscribe function 
@@ -152,7 +208,6 @@ class User extends Model
 
 	/**
 	 * Function gets images by user's id
-	 * 
 	 * @return array
 	 */
 	public static function getProfileImages($id)
@@ -177,7 +232,6 @@ class User extends Model
 
 	/**
 	 * Function uploads an user's image
-	 *  
 	 * @return array
 	 */
 	public static function addImage($image, $username)
@@ -189,7 +243,6 @@ class User extends Model
 
 	/**
 	 * Function gets private info by username
-	 * 
 	 * @return array
 	 */
 	public static function getPrivateInfo($username) 
@@ -199,7 +252,6 @@ class User extends Model
 
 	/**
 	 * Function send a like to the photo
-	 * 
 	 * @todo realize
 	 * @return boolean
 	 */
@@ -210,7 +262,6 @@ class User extends Model
 
 	/**
 	 * Function send a dislike to the photo
-	 * 
 	 * @todo realize
 	 * @return boolean
 	 */
@@ -221,7 +272,6 @@ class User extends Model
 
 	/**
 	 * Function gets info about photo
-	 * 
 	 * @param  integer $id 
 	 * @return array
 	 */

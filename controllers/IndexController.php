@@ -2,6 +2,10 @@
 
 class IndexController
 {
+	/**
+	 * Index page action
+	 * @return boolean
+	 */
 	public function actionIndex()
 	{
 		if (isset($_SESSION['username'])) {

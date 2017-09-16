@@ -24,6 +24,7 @@ class Router
 
         foreach($this->routes as $pattern => $path) {
             if (preg_match("~$pattern~", $uri)) {
+
                 $internalRoute = preg_replace("~$pattern~", $path, $uri);
 
                 $segment = explode('/', $internalRoute);
@@ -35,16 +36,15 @@ class Router
 
                 if (file_exists($controllerFile)) {
                     include_once($controllerFile);
+                } else {
+                    break;
                 }
 
-                $controllerObject = new $controllerName();
+                $controllerObject = new $controllerName;
 
                 if (is_callable(array($controllerObject, $actionName))) {
                     $result = call_user_func_array(array($controllerObject, $actionName), $segment);
                     break;
-                } 
-                else {
-                    $this->invalidRoute();
                 }
             }
         }

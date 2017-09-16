@@ -4,11 +4,10 @@ class ProfileController
 {	
 	/**
 	 * Show profile by username
-	 * 
 	 * @param  integer $user
 	 * @return boolean
 	 */
-	public function actionProfile($user)
+	public function actionUser($user)
 	{
 		$userInfo = array();
 
@@ -33,28 +32,7 @@ class ProfileController
 	}
 
 	/**
-	 * Edit page
-	 * 	
-	 * @return boolean
-	 */
-	public function actionEdit()
-	{
-		if (!isset($_SESSION['logged'])) {
-			header("Location: /auth");
-		}
-		else {
-			$userData = User::getPrivateInfo($_SESSION['username']);
-
-			$view = new View('cabinet/edit');
-			$view->assign('userData', $userData);
-		}
-		
-		return true;
-	}
-
-	/**
 	 * Apply Edit
-	 * 
 	 * @return boolean
 	 */
 	public function actionApplyEdit()
@@ -68,37 +46,7 @@ class ProfileController
 	}
 
 	/**
-	 * Upload an image
-	 * 
-	 * @return boolean
-	 */
-	public function actionAddimage() 
-	{
-		if (isset($_POST['addphoto'])) {
-			$ext = explode(".", $_FILES['image']['name']);
-	        $ext = end($ext);
-
-	        if ($ext != 'png' && $ext != 'jpg' && $ext != 'gif')
-	            die('Недопустимое расширение файла');
-
-	        $path = ROOT_PATH . '/images/';
-
-	        $fileName = time() . '.' . 'png';
-	        $filePath = $path . $fileName;
-
-	        if (move_uploaded_file($_FILES['image']['tmp_name'], $filePath)) {
-	        	Functions::imageresize($filePath, $ext);
-                User::addImage($fileName, $_SESSION['username']);
-	        }
-	    }
-
-	    header("Location: /" . $_SESSION['username']);
-	    return true;
-	}
-
-	/**
 	 * Remove image
-	 * 
 	 * @return boolean
 	 */
 	public function actionRemoveimage()
@@ -111,7 +59,7 @@ class ProfileController
 	}
 
 	/**
-	 * @todo Currently work only with .jpg
+	 * Views the photo
 	 * @return boolean
 	 */
 	public function actionViewphoto($photo) 
@@ -129,37 +77,40 @@ class ProfileController
 	}
 
 	/**
-	 * Subscribe function 
-	 * 
-	 * @param  string $user [description]
-	 * @return boolean      [description]
+	 * Shows user's followings
+	 * @param  string $username
+	 * @return boolean         
 	 */
-	public function actionSubscribe($user)
+	public function actionFollowing($username)
 	{
 		if (isset($_SESSION['username'])) {
-			if (User::subscribe($_SESSION['username'], $user)) {
-				header("Location: /" . $user);
-			}
+			$followings = User::getFollowings($username);
+			$view = new View('cabinet/followings');
+			$view->assign('followings', $followings);
 		}
-		else { header("Location: /"); }
+		else {
+			header("Location: /");
+		}
+
 		return true;
 	}
 
 	/**
-	 * Unsubscribe function 
-	 * 
-	 * @param  string $user [description]
-	 * @return boolean      [description]
+	 * Shows user's subscribers
+	 * @param  string $username
+	 * @return boolean
 	 */
-	public function actionUnsubscribe($user)
+	public function actionSubscribers($username)
 	{
-		if ($_SESSION['username']) {
-			if (User::unsubscribe($_SESSION['username'], $user)) {
-				header("Location: /" . $user);
-			}
+		if (isset($_SESSION['username'])) {
+			$subscribers = User::getSubscribers($username);
+			$view = new View('cabinet/subscribers');
+			$view->assign('subscribers', $subscribers);
+		}
+		else {
+			header("Location: /");
 		}
 
-		else {header("Location: /");}
 		return true;
 	}
 }

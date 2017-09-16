@@ -64,17 +64,19 @@
 			<?php if (isset($userInfo) && isset($_SESSION['username']) && ($_SESSION['username'] != $userInfo['username'])): ?>
 				<?php if ($subscriber == 1): ?>
 				<div class="btn-option">
-					<a href="unsubscribe/<?=$userInfo['username'];?>">
-						<button type="button" class="col-xs-12 btn-subscribe">Already subscribing</button>
+					<form action="/unsubscribe" method="post">
+						<input type="hidden" name="username" value="<?=$userInfo['username'];?>">
+						<button type="submit" name="unsubscribe" class="col-xs-12 btn-subscribe">Already subscribing</button>
 					</a>
 				</div>
 				<?php endif; ?>
 
 				<?php if ($subscriber == 0): ?>
 				<div class="btn-option">
-					<a href="subscribe/<?=$userInfo['username'];?>">
-						<button class="col-xs-12 btn-subscribe">Subscribe</button>
-					</a>
+					<form action="/subscribe" method="post">
+						<input type="hidden" name="username" value="<?=$userInfo['username'];?>">
+						<button type="submit" name="subscribe" class="col-xs-12 btn-subscribe">Subscribe</button>
+					</form>
 				</div>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -89,12 +91,12 @@
 
 		<div class="stats_column col-xs-4">
 			<span><?= $userInfo['subscribers']; ?></span>
-			subscribers
+			<a href="/subscribers/<?=$userInfo['username'];?>">subscribers</a>
 		</div>
 
 		<div class="stats_column col-xs-4">
 			<span><?= $userInfo['followings']; ?></span>
-			following
+			<a href="/following/<?=$userInfo['username'];?>">following</a>
 		</div>
 	</div>
 

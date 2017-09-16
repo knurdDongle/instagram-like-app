@@ -2,6 +2,10 @@
 
 class AuthController
 {
+	/**
+	 * Register function
+	 * @return boolean
+	 */
 	public function actionRegister()
 	{
 		if (isset($_POST['register'])) {
@@ -25,6 +29,10 @@ class AuthController
 		return true;
 	}
 
+	/**
+	 * Login function
+	 * @return boolean
+	 */
 	public function actionLogin()
 	{
 		if (isset($_POST['login'])) {
@@ -50,6 +58,10 @@ class AuthController
 		return true;
 	}
 
+	/**
+	 * Logout function
+	 * @return boolean
+	 */
 	public function actionLogout()
 	{
 		if (isset($_POST['logout'])) {
@@ -57,5 +69,6 @@ class AuthController
 		}
 
 		header("Location: /login");
+		return true;
 	}
 }

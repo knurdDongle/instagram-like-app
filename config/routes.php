@@ -6,14 +6,18 @@ return array(
 	'login' => 'auth/login',
 	'logout' => 'auth/logout',
 
-	# User actions
-	'unsubscribe/([a-zA-Z0-9]+)' => 'profile/unsubscribe/$1',
-	'subscribe/([a-zA-Z0-9]+)' => 'profile/subscribe/$1',
-	'photo/([0-9]+)' => 'profile/viewphoto/$1',
-	'cabinet/addimage' => 'profile/addimage',
+	# User Actions
+	'unsubscribe' => 'action/unsubscribe',
+	'subscribe' => 'action/subscribe',
+	'cabinet/addimage' => 'action/addimage',
 	'account/edit' => 'profile/edit',
-	'([a-zA-Z0-9]+)' => 'profile/profile/$1',
-	
+
+	# User info
+	'photo/([0-9]+)' => 'profile/viewphoto/$1',
+	'following/([a-zA-Z0-9]+)' => 'profile/following/$1',
+	'subscribers/([a-zA-Z0-9]+)' => 'profile/subscribers/$1',
+	'(^[a-zA-Z0-9]+$)' => 'profile/user/$1',
+
 	# Index
 	'index.php' => 'index/index',
 	'' => 'index/index'

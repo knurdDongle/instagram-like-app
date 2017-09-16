@@ -28,21 +28,21 @@ class Functions
         switch ($diff = $currentTime - $creatingTime)
         {
             case ($diff < 10): 
-                return "Несколько секунд назад";
+                return "A few seconds ago";
                 break;
             case ($diff < 60):
-                return "$diff секунд назад";
+                return "$diff seconds ago";
                 break;
             case ($diff < 3600):
-                $echoTime = $diff / 60;
-                return "$echoTime минут назад";
+                $echoTime = round($diff / 60);
+                return "$echoTime minutes ago";
                 break;
             case ($diff < 12800): 
-                $echoTime = $diff / 60 / 60;
-                return "$echoTime часов назад";
+                $echoTime = round($diff / 60 / 60);
+                return "$echoTime hours ago";
                 break;
             default: 
-                return $date;
+                return date("F j, Y, g:i a", strtotime($date));
                 break;
         } 
         
