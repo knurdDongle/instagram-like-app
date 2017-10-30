@@ -45,6 +45,15 @@ class Functions
                 return date("F j, Y, g:i a", strtotime($date));
                 break;
         } 
-        
+    }
+
+    static function logged_in() 
+    {
+        return isset($_SESSION['username']) ? true : false;
+    }
+
+    static function get_current_session_user() 
+    {
+        return isset($_SESSION['username']) ? $_SESSION['username'] : null;
     }
 }

@@ -2,64 +2,46 @@
 
 class User extends Model 
 {
-	/**
-	 * Function gets user's info by username
-	 * @param  string $username 
-	 * @return array
-	 */
-	public static function getInfo($username)
+	static function getInfo(string $username)
 	{
-		try {
-			$user = self::getIdByUsername($username);
+		$user_info = array();
 
-			return parent::db()->run('
-				SELECT 
-					id, 
-		    		username, 
-		    		avatar, 
-		    		name, 
-		    		description,
-		    		ifnull((SELECT COUNT(*) FROM subscribes WHERE user = ?), 0) as subscribers,
-		    		ifnull((SELECT COUNT(*) FROM subscribes WHERE subscriber = ?), 0) as followings
-				FROM users 
-				WHERE username = ?', array($user, $user, $username)
-			)->fetch(PDO::FETCH_ASSOC);
-		} catch (PDOException $e) {
-			die('Database error: ' . $e->getMessage());
-		} catch (Exception $e) {
-			die('General error: ' . $e->getMessage());
-		}
+		$user = self::getUserId($username);
+
+		$query = 'SELECT 
+				id, 
+	    		username, 
+	    		avatar, 
+	    		name, 
+	    		description,
+	    		ifnull((SELECT COUNT(*) FROM subscribes WHERE user = ?), 0) as subscribers,
+	    		ifnull((SELECT COUNT(*) FROM subscribes WHERE subscriber = ?), 0) as followings
+			FROM users 
+			WHERE username = ?';
+
+
+		$user_info['profile_info'] = parent::db()->run($query, array($user, $user, $username))->fetch(PDO::FETCH_ASSOC);
+		$user_info['images'] = self::getProfileImages($user_info['profile_info']['id']);
+
+		return $user_info;
 	}
 
-	/**
-	 * Function changes user's username
-	 * 
-	 * @todo optimization
-	 * @return boolean
-	 */
-	public static function setUsername($username, $old_username)
+	static function setUsername(string $username, string $old_username)
 	{
-		if (!parent::db()->run('SELECT 1 FROM users WHERE username = ?', array($username))->fetch()) {
-			return parent::db()->run('UPDATE users SET username = ? WHERE username = ?', array($username, $old_username));
-		}
-
-		return false;
+		return username_exists($username) ? false : parent::db()->run('UPDATE users SET username = ? WHERE username = ?', array($username, $old_username));;
 	}
 
-	public static function getFollowings($username)
+	static function getFollowings(string $username)
 	{
 		$followings = array();
 		$i = 0;
-		$sql = parent::db()->run('
-			SELECT 
-				f.`user`,
-				u.`avatar`,
-				u.`username`
-			FROM 
-				`subscribes` f
-				LEFT JOIN `users` u ON (f.`user` = u.`id`) 
-			WHERE 
-				f.`subscriber` = ?', array(self::getIdByUsername($username)));
+
+		$query = 'SELECT f.`user`,u.`avatar`, u.`username`
+			FROM `subscribes` f
+			LEFT JOIN `users` u ON (f.`user` = u.`id`) 
+			WHERE f.`subscriber` = ?';
+
+		$sql = parent::db()->run($query, array(self::getUserId($username)));
 
 		while ($result = $sql->fetch()) {
 			$followings[$i]['user'] = $result['user'];
@@ -72,19 +54,17 @@ class User extends Model
 		return $followings;
 	}
 
-	public static function getSubscribers($username)
+	static function getSubscribers(string $username)
 	{
 		$subscribers = array();
 		$i = 0;
-		$sql = parent::db()->run('
-			SELECT 
-				u.`avatar`,
-				u.`username`
-			FROM
-				`subscribes` f
-				LEFT JOIN `users` u ON (f.`subscriber` = u.`id`)
-			WHERE
-				f.`user` = ?', array(self::getIdByUsername($username)));
+
+		$query = 'SELECT u.`avatar`, u.`username`
+			FROM `subscribes` f
+			LEFT JOIN `users` u ON (f.`subscriber` = u.`id`)
+			WHERE f.`user` = ?';
+
+		$sql = parent::db()->run($query, array(self::getUserId($username)));
 
 		while ($result = $sql->fetch()) {
 			$subscribers[$i]['avatar'] = $result['avatar'];
@@ -96,24 +76,16 @@ class User extends Model
 		return $subscribers;
 	}
 
-	public static function getFollowingPosts($username)
+	static function getFollowingPosts(string $username)
 	{
-		$sql = parent::db()->run('
-			SELECT 
-				ui.`id` , 
-				ui.`image`, 
-				ui.`likes`, 
-				ui.`owner`,
-				ui.`creation_date`
-			FROM 
-				`user_images` ui
-				LEFT JOIN `subscribes` f ON (ui.`owner` = f.`user`)
-			WHERE
-				f.`subscriber` = ?
-			ORDER by
-				ui.`creation_date`
-			DESC', array(self::getIdByUsername($username))
-		);
+		$query = 'SELECT ui.`id`, ui.`image`, ui.`likes`, ui.`owner`, ui.`creation_date`
+			FROM `user_images` ui
+			LEFT JOIN `subscribes` f ON (ui.`owner` = f.`user`)
+			WHERE f.`subscriber` = ?
+			ORDER by ui.`creation_date`
+			DESC';
+
+		$sql = parent::db()->run($query, array(self::getUserId($username)));
 
 		$i = 0;
 		$posts = array();
@@ -133,43 +105,27 @@ class User extends Model
 		return $posts;
 	}	
 
-	/**
-	 * Function gets user's username by id
-	 * @return integer
-	 */
-	public static function getUsernameById($id)
+	static function getUsernameById(int $id)
 	{
 		return parent::db()->run('SELECT username FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
 	}
 
-	/**
-	 * Function gets user's id by username
-	 * @return boolean
-	 */
-	public static function getIdByUsername($username) 
+
+	static function getUserId(string $username)
 	{
 		return parent::db()->run('SELECT id FROM users WHERE username = ? LIMIT 1', array($username))->fetchColumn();
 	}
 
-	/**
-	 * Function gets user's avatar by id
-	 * @return boolean
-	 */
-	public static function getAvatarById($id)
+
+	static function getAvatarById(int $id)
 	{
 		return parent::db()->run('SELECT avatar FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
 	}
 
-	/**
-	 * Function checks whether the user subscriber of another user or not
-	 * @param  string $subscriber 
-	 * @param  string $user       
-	 * @return boolean            
-	 */
-	public static function getSubscribed($subscriber, $user) 
+	static function getSubscribed(string $subscriber, string $user)
 	{
-		$user = self::getIdByUsername($user);
-		$subscriber = self::getIdByUsername($subscriber);
+		$user = self::getUserId($user);
+		$subscriber = self::getUserId($subscriber);
 
 		if (parent::db()->run('SELECT 1 FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $subscriber))->fetch()) {
 			return true;
@@ -178,39 +134,23 @@ class User extends Model
 		return false;
 	}
 
-	/**
-	 * Subscribe function 
-	 * @param  string $current_user [description]
-	 * @param  string $user         [description]
-	 * @return boolean              [description]
-	 */
-	public static function subscribe($current_user, $user)
+	static function subscribe(string $current_user, string $user)
 	{
-		$user = self::getIdByUsername($user);
-		$subscriber = self::getIdByUsername($current_user);
+		$user = self::getUserId($user);
+		$subscriber = self::getUserId($current_user);
 
 		return parent::db()->run('INSERT INTO subscribes (id, user, subscriber) VALUES ("", ?, ?)', array($user, $subscriber));
 	}
 
-	/**
-	 * Unsubscribe function 
-	 * @param  string $current_user [description]
-	 * @param  string $user         [description]
-	 * @return boolean              [description]
-	 */
-	public static function unsubscribe($current_user, $user) 
+	static function unsubscribe(string $current_user, string $user)
 	{
-		$user = self::getIdByUsername($user);
-		$subscriber = self::getIdByUsername($current_user);
+		$user = self::getUserId($user);
+		$subscriber = self::getUserId($current_user);
 
 		return parent::db()->run('DELETE FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $subscriber));
 	}
 
-	/**
-	 * Function gets images by user's id
-	 * @return array
-	 */
-	public static function getProfileImages($id)
+	static function getProfileImages(int $id)
 	{
 		$images = array();
 		$i = 0;
@@ -230,53 +170,41 @@ class User extends Model
 		return $images;
 	}
 
-	/**
-	 * Function uploads an user's image
-	 * @return array
-	 */
-	public static function addImage($image, $username)
+	static function addImage(string $image, string $username)
 	{
-		if ($user = self::getIdByUsername($username)) {
-			return parent::db()->run('INSERT INTO user_images (id, image, owner, creation_date) VALUES("", ?, ?, NOW())', array($image, $user));
+		if ($user = self::getUserId($username)) {
+			return parent::db()->run('INSERT INTO user_images (image, owner, creation_date) VALUES(?, ?, NOW())', array($image, $user));
 		}
 	}
 
-	/**
-	 * Function gets private info by username
-	 * @return array
-	 */
-	public static function getPrivateInfo($username) 
+	static function getPrivateInfo(string $username)
 	{
 		return parent::db()->run('SELECT username, password, email FROM users WHERE username = ?', array($username))->fetch();
 	}
 
-	/**
-	 * Function send a like to the photo
-	 * @todo realize
-	 * @return boolean
-	 */
-	public static function like($id) 
+	static function like(int $id)
 	{
-		return parent::db()->run('UPDATE user_images SET likes = likes + 1 WHERE id = ?', array($id))->fetch();
+		return parent::db()->run('UPDATE user_images SET likes = likes + 1 WHERE id = ?', array($id));
 	}
 
-	/**
-	 * Function send a dislike to the photo
-	 * @todo realize
-	 * @return boolean
-	 */
-	public static function dislike($id)
+	static function dislike(int $id)
 	{
 
 	}
 
-	/**
-	 * Function gets info about photo
-	 * @param  integer $id 
-	 * @return array
-	 */
-	public static function getPhoto($image) 
+	static function getPhoto(string $image)
 	{
-		return parent::db()->run('SELECT likes FROM user_images WHERE image = ?', array($image))->fetch();
+		return parent::db()->run('SELECT likes FROM user_images WHERE image = ?', array($image . '.png'))->fetch();
+	}
+
+
+	static function username_exists(string $username)
+	{
+		return parent::db()->run('SELECT 1 FROM users WHERE username = ?', array($username))->fetch();
+	}
+
+	static function user_exists(string $username, string $email)
+	{
+		return parent::db()->run('SELECT 1 FROM users WHERE username = ? OR email = ?', array($username, $email))->fetch();
 	}
 }

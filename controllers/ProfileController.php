@@ -2,39 +2,25 @@
 
 class ProfileController
 {	
-	/**
-	 * Show profile by username
-	 * @param  integer $user
-	 * @return boolean
-	 */
 	public function actionUser($user)
 	{
 		$userInfo = array();
 
-		if ($userInfo = User::getInfo($user)) {
-			$images = User::getProfileImages($userInfo['id']);
-			$subscriber = 0;
-
-			if (isset($_SESSION['username'])) {
-				$subscriber = User::getSubscribed($_SESSION['username'], $user);
-			}
+		if (User::username_exists($user)) {
+			$userInfo = User::getInfo($user);
+			$subscriber = isset($_SESSION['username']) ? User::getSubscribed($_SESSION['username'], $user) : false;
 
 			$view = new View('cabinet/index');
 			$view->assign('userInfo', $userInfo);
-			$view->assign('images', $images);
 			$view->assign('subscriber', $subscriber);
 		}
 		else {
 			$view = new View('cabinet/notfound');
-		}
+		}	
 
 		return true;
 	}
 
-	/**
-	 * Apply Edit
-	 * @return boolean
-	 */
 	public function actionApplyEdit()
 	{
 		if (!User::setUsername($_POST['username'], $_POST['old_username'])) {
@@ -45,10 +31,6 @@ class ProfileController
 		}
 	}
 
-	/**
-	 * Remove image
-	 * @return boolean
-	 */
 	public function actionRemoveimage()
 	{
 		if (isset($_POST['removephoto'])) {
@@ -58,14 +40,9 @@ class ProfileController
 		}
 	}
 
-	/**
-	 * Views the photo
-	 * @return boolean
-	 */
 	public function actionViewphoto($photo) 
 	{
 		$photoInfo = array();
-		$photo .= '.png';
 
 		if ($photoInfo = User::getPhoto($photo)) {
 			$view = new View('photo/index');
@@ -76,15 +53,11 @@ class ProfileController
 		return true;
 	}
 
-	/**
-	 * Shows user's followings
-	 * @param  string $username
-	 * @return boolean         
-	 */
 	public function actionFollowing($username)
 	{
 		if (isset($_SESSION['username'])) {
 			$followings = User::getFollowings($username);
+
 			$view = new View('cabinet/followings');
 			$view->assign('followings', $followings);
 		}
@@ -95,19 +68,28 @@ class ProfileController
 		return true;
 	}
 
-	/**
-	 * Shows user's subscribers
-	 * @param  string $username
-	 * @return boolean
-	 */
 	public function actionSubscribers($username)
 	{
 		if (isset($_SESSION['username'])) {
 			$subscribers = User::getSubscribers($username);
+
 			$view = new View('cabinet/subscribers');
 			$view->assign('subscribers', $subscribers);
 		}
 		else {
+			header("Location: /");
+		}
+
+		return true;
+	}
+
+	public function actionEditpage() {
+		if (Functions::logged_in()) {
+			$userData = User::getPrivateInfo($_SESSION['username']);
+
+			$view = new View('cabinet/edit');
+			$view->assign('userData', $userData);
+		} else {
 			header("Location: /");
 		}
 

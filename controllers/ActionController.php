@@ -2,45 +2,28 @@
 
 class ActionController
 {
-	/**
-	 * Subscribe function 
-	 * @param  string $user
-	 * @return boolean 
-	 */
 	public function actionSubscribe()
 	{
-		if (isset($_SESSION['username']) && isset($_POST['subscribe'])) {
-			if (User::subscribe($_SESSION['username'], $_POST['username'])) {
-				header("Location: {$_SERVER['HTTP_REFERER']}");
-			}
-		} else { 
-			header("Location: /" . $_SESSION['username']); 
+		if (Functions::logged_in() && isset($_POST['subscribe'])) {
+			User::subscribe(CURRENT_USER, $_POST['username']);
 		}
+
+		header("Location: {$_SERVER['HTTP_REFERER']}");
+
 		return true;
 	}
 
-	/**
-	 * Unsubscribe function 
-	 * @param  string $user
-	 * @return boolean 
-	 */
 	public function actionUnsubscribe()
 	{
-		if (isset($_SESSION['username']) && isset($_POST['unsubscribe'])) {
-			if (User::unsubscribe($_SESSION['username'], $_POST['username'])) {
-				header("Location: {$_SERVER['HTTP_REFERER']}");
-			}
-		} else {
-			header("Location: /");
-		}
+		if (Functions::logged_in() && isset($_POST['unsubscribe'])) {
+			User::unsubscribe($_SESSION['username'], $_POST['username']);
+		} 
+
+		header("Location: {$_SERVER['HTTP_REFERER']}");
 
 		return true;
 	}
 
-	/**
-	 * Upload an image
-	 * @return boolean
-	 */
 	public function actionAddimage() 
 	{
 		if (isset($_POST['addphoto'])) {
@@ -61,26 +44,21 @@ class ActionController
 	        }
 	    }
 
-	    header("Location: /" . $_SESSION['username']);
+	    header("Location: /" . CURRENT_USER);
 	    return true;
 	}
 
-	/**
-	 * Edit page
-	 * @return boolean
-	 */
 	public function actionEdit()
 	{
-		if (!isset($_SESSION['logged'])) {
-			header("Location: /auth");
-		}
-		else {
-			$userData = User::getPrivateInfo($_SESSION['username']);
+		if (Functions::logged_in()) {
+			$userData = User::getPrivateInfo(CURRENT_USER);
 
 			$view = new View('cabinet/edit');
 			$view->assign('userData', $userData);
+			return;
 		}
 		
-		return true;
+		header("Location: /");
+		return;
 	}
 }

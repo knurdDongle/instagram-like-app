@@ -2,9 +2,6 @@
 
 class Auth extends Model
 {
-	/**
-	 * @return boolean
-	 */
 	public static function register($data)
 	{
 		$postData = array();
@@ -12,17 +9,15 @@ class Auth extends Model
 		foreach ($data as $key => $value) 
 			$postData[] = $value;
 
-		if (!parent::db()->run('SELECT 1 FROM users WHERE username = ? OR email = ?', array($data['username'], $data['email']))->fetch()) {
+		if (!User::user_exists($data['username'], $data['email'])) {
 			return parent::db()->run('INSERT INTO users (username, password, email) VALUES(?, ?, ?)', $postData);
 		} 
 		else {
-			die('Данное имя уже занято! <a href="/auth"> Назад </a>');
+			die('Данное имя уже занято! <a href="/register"> Назад </a>');
 		}
 	}
 
-	/**
-	 * @return boolean
-	 */
+
 	public static function login($data)
 	{
 		$postData = array();

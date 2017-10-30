@@ -14,20 +14,20 @@
 	<div class="col-xs-12 profile_info">
 		<div class="col-xs-12 col-sm-8 col-sm-offset-2">
 			<div class="profile_avatar col-sm-4">
-			<?php if (empty($userInfo['avatar'])): ?>
+			<?php if (empty($userInfo['profile_info']['avatar'])): ?>
 				<img src="views/templates/default_pic.png" class="profile_pic default_profile_pic">
 			<?php endif; ?>
-			<?php if (!empty($userInfo['avatar'])): ?>
+			<?php if (!empty($userInfo['profile_info']['avatar'])): ?>
 				<img src="images/<?= $userInfo['avatar']?>" class="profile_pic">
 			<?php endif; ?>
 			</div>
 
 			<div class="profile_info">
-				<span class="profile_info-name"><?= $userInfo['name'] . ' <b>@'. $userInfo['username'] . '</b>';?></span>
-				<span class="profile_info-description"><?= $userInfo['description']; ?></span>
+				<span class="profile_info-name"><?= $userInfo['profile_info']['name'] . ' <b>@'. $userInfo['profile_info']['username'] . '</b>';?></span>
+				<span class="profile_info-description"><?= $userInfo['profile_info']['description']; ?></span>
 			</div>
 		
-			<?php if (isset($userInfo) && isset($_SESSION['username']) && ($_SESSION['username'] == $userInfo['username'])): ?>
+			<?php if (isset($userInfo) && isset($_SESSION['username']) && ($_SESSION['username'] == $userInfo['profile_info']['username'])): ?>
 			<div class="btn-option">
 				<div class="btn-group">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -61,11 +61,11 @@
 			</div>
 			<?php endif; ?>
 
-			<?php if (isset($userInfo) && isset($_SESSION['username']) && ($_SESSION['username'] != $userInfo['username'])): ?>
+			<?php if (isset($userInfo) && isset($_SESSION['username']) && ($_SESSION['username'] != $userInfo['profile_info']['username'])): ?>
 				<?php if ($subscriber == 1): ?>
 				<div class="btn-option">
 					<form action="/unsubscribe" method="post">
-						<input type="hidden" name="username" value="<?=$userInfo['username'];?>">
+						<input type="hidden" name="username" value="<?=$userInfo['profile_info']['username'];?>">
 						<button type="submit" name="unsubscribe" class="col-xs-12 btn-subscribe">Already subscribing</button>
 					</a>
 				</div>
@@ -74,7 +74,7 @@
 				<?php if ($subscriber == 0): ?>
 				<div class="btn-option">
 					<form action="/subscribe" method="post">
-						<input type="hidden" name="username" value="<?=$userInfo['username'];?>">
+						<input type="hidden" name="username" value="<?=$userInfo['profile_info']['username'];?>">
 						<button type="submit" name="subscribe" class="col-xs-12 btn-subscribe">Subscribe</button>
 					</form>
 				</div>
@@ -85,25 +85,25 @@
 	
 	<div class="profile_stats col-xs-12 col-sm-6 col-sm-offset-3">
 		<div class="stats_column col-xs-4">
-			<span><?= count($images); ?></span>
+			<span><?= count($userInfo['images'] > 0); ?></span>
 			photos
 		</div>
 
 		<div class="stats_column col-xs-4">
-			<span><?= $userInfo['subscribers']; ?></span>
-			<a href="/subscribers/<?=$userInfo['username'];?>">subscribers</a>
+			<span><?= $userInfo['profile_info']['subscribers']; ?></span>
+			<a href="/subscribers/<?=$userInfo['profile_info']['username'];?>">subscribers</a>
 		</div>
 
 		<div class="stats_column col-xs-4">
-			<span><?= $userInfo['followings']; ?></span>
-			<a href="/following/<?=$userInfo['username'];?>">following</a>
+			<span><?= $userInfo['profile_info']['followings']; ?></span>
+			<a href="/following/<?=$userInfo['profile_info']['username'];?>">following</a>
 		</div>
 	</div>
 
-	<?php if (isset($images)): ?>
+	<?php if (count($userInfo['images'] > 0)): ?>
 	<div class="photos">
 		<?php $i = 0; ?>
-		<?php foreach ($images as $image): ?>
+		<?php foreach ($userInfo['images'] as $image): ?>
 			<?php if ($i == 0 || $i % 3 == 0): ?>
 			<div class="col-xs-12 items">
 			<?php endif; ?>

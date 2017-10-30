@@ -2,37 +2,25 @@
 
 class AuthController
 {
-	/**
-	 * Register function
-	 * @return boolean
-	 */
 	public function actionRegister()
 	{
 		if (isset($_POST['register'])) {
 			$data = array(
-				'username' => $_POST['username'],
+				'username' => $_POST['username'], 
 				'password' => md5(HASH_PASSWORD_KEY) . md5($_POST['password']),
-				'email'    => $_POST['email']
+				'email'  => $_POST['email']
 			);
 
-			if (Auth::register($data))
-			{
+			if (Auth::register($data)) {
 				$_SESSION['username'] = $data['username'];
-				$_SESSION['logged']   = 'user';
-				
-				header("Location: /" . $data['username']);
+
+				header("Location: /" . CURRENT_USER);
+				return true;
 			}	
-		} else {
-			$view = new View('index/index');
 		}
 
-		return true;
+		return new View('index/index');
 	}
-
-	/**
-	 * Login function
-	 * @return boolean
-	 */
 	public function actionLogin()
 	{
 		if (isset($_POST['login'])) {
@@ -43,25 +31,15 @@ class AuthController
 
 			if (Auth::login($data)) {
 				$_SESSION['username'] = $data['username'];
-				$_SESSION['logged']   = 'user';
 
-				header("Location: /" . $_SESSION['username']);
+				header("Location: /" . CURRENT_USER);
+				return true;
 			} 
-			else {
-				header("Location: /login");
-			}
 		}
-		else {
-			$view = new View('auth/login');
-		}
-	
-		return true;
+		
+		return new View('auth/login');
 	}
 
-	/**
-	 * Logout function
-	 * @return boolean
-	 */
 	public function actionLogout()
 	{
 		if (isset($_POST['logout'])) {
