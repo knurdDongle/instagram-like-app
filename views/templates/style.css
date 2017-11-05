@@ -1,5 +1,6 @@
 body {
-	background: #fafafa;
+	background-image: radial-gradient(ellipse at 99% -50%, #BD47F2 10%, #0062FF 120%);
+	height: 100%;
 	font-family: 'Open Sans', sans-serif;
 }
 .profile_pic {
@@ -19,17 +20,21 @@ header {
 	z-index: 100000;
 	display: block;
 	background-color: #fff;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
 }
 
 header .menu {
-	margin-top: 17px;
+	margin-top: 13px;
 }
 
-header .menu a {
+header .menu a:not(:first-child) {
 	margin: 5px;
 	float: right !important;
 	padding: 10px 15px;
+	color: #000;
+	text-transform: uppercase;
+	font-family: 'Open Sans';
+	letter-spacing: .06em;
 }
 
 div.wrapper {
@@ -70,6 +75,11 @@ div.stats_column {
 	padding-top: 15px;
 	padding-bottom: 15px;
 	display: inline-block;
+	color: #fff;
+}
+
+div.stats_column a {
+	color: #fff;
 }
 
 div.stats_column span {
@@ -143,10 +153,12 @@ div.photos .items {
 	display: block;
 	font-size: 16px;
 	padding-top: 50px;
+	color: #fff;
 }
 
 .profile_info-name {
 	font-size: 20px;
+	color: #fff;
 }
 
 .btn-subscribe {
@@ -181,4 +193,26 @@ div.photos .items {
 
 .default_profile_pic {
 	border: 1px solid #efefef;
+}
+
+.logo {
+	width: 300px;
+	height: 75px;
+	display: inline;
+}
+
+.btn-search-friends {
+	background-color: #0ABCEB;
+	color: #fff !important;
+	padding-left: 2rem !important;
+	padding-right: 2rem !important;
+	transition: 0.2s;
+}
+
+.btn-search-friends:hover {
+	background-color: #2286FB;
+}
+
+a:hover {
+	text-decoration: none;
 }

@@ -2,7 +2,7 @@
 
 class ActionController
 {
-	public function actionSubscribe()
+	function actionSubscribe()
 	{
 		if (Functions::logged_in() && isset($_POST['subscribe'])) {
 			User::subscribe(CURRENT_USER, $_POST['username']);
@@ -13,7 +13,7 @@ class ActionController
 		return true;
 	}
 
-	public function actionUnsubscribe()
+	function actionUnsubscribe()
 	{
 		if (Functions::logged_in() && isset($_POST['unsubscribe'])) {
 			User::unsubscribe($_SESSION['username'], $_POST['username']);
@@ -24,7 +24,7 @@ class ActionController
 		return true;
 	}
 
-	public function actionAddimage() 
+	function actionAddimage() 
 	{
 		if (isset($_POST['addphoto'])) {
 			$ext = explode(".", $_FILES['image']['name']);
@@ -35,12 +35,12 @@ class ActionController
 
 	        $path = ROOT_PATH . '/images/';
 
-	        $fileName = time() . '.' . 'png';
+	        $fileName = time();
 	        $filePath = $path . $fileName;
 
 	        if (move_uploaded_file($_FILES['image']['tmp_name'], $filePath)) {
 	        	Functions::imageresize($filePath, $ext);
-                User::addImage($fileName, $_SESSION['username']);
+                User::addImage($fileName);
 	        }
 	    }
 
@@ -48,7 +48,7 @@ class ActionController
 	    return true;
 	}
 
-	public function actionEdit()
+	function actionEdit()
 	{
 		if (Functions::logged_in()) {
 			$userData = User::getPrivateInfo(CURRENT_USER);

@@ -7,15 +7,33 @@
 
 <style>
 
-	.item-heading {
-		height: 40px;
-		border: 1px solid #ccc;
-	}
+	.wrapper {
+			height: auto;
+		}
+		.item-heading {
+			text-align: center;
+			background: #FF9800;
+			font-size: 16px;
+		}
 
-	.items {
-		padding-left: 100px;
-		padding-right: 100px;
-	}
+		.item-heading a {
+			color: #fff;
+		}
+
+		.items {
+			height: 100%;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+		.items .item {
+			margin-top: 30px;
+		}
+
+		.btn-option {
+			width: 100%;
+			margin-left: 0;
+		}
 </style>
 </head>
 

@@ -2,7 +2,7 @@
 
 class IndexController
 {
-	public function actionIndex()
+	function actionIndex()
 	{
 		if (Functions::logged_in()) {
 			$posts = User::getFollowingPosts(CURRENT_USER);

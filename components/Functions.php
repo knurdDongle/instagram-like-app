@@ -2,7 +2,7 @@
 
 class Functions 
 {
-    public static function imageresize($img, $extension)
+    static function imageresize($img, $extension)
     {
         imagepng(imagecreatefromstring(file_get_contents($img)), $img);
         $size = getimagesize($img);
@@ -13,14 +13,14 @@ class Functions
         imagedestroy($src);
     }  
 
-    public static function removeExtension($photo)
+    static function removeExtension($photo)
     {
         $photo = explode('.', $photo);
 
         return array_shift($photo);
     }
 
-    public static function ceilTime($date) 
+    static function ceilTime($date) 
     {
         $currentTime = time() + 3600;
         $creatingTime = strtotime($date);

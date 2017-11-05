@@ -2,15 +2,19 @@
 
 class Auth extends Model
 {
-	public static function register($data)
+	static function register($data)
 	{
 		$postData = array();
 
 		foreach ($data as $key => $value) 
 			$postData[] = $value;
 
-		if (!User::user_exists($data['username'], $data['email'])) {
-			return parent::db()->run('INSERT INTO users (username, password, email) VALUES(?, ?, ?)', $postData);
+		$user_exists = User::user_exists($data['username'], $data['email']);
+
+		if (!$user_exists) {
+			return parent::db()->run(
+				"INSERT INTO users (username, password, email, avatar) VALUES(?, ?, ?, " . DEFAULT_PROFILE_PIC . ")", $postData
+			);
 		} 
 		else {
 			die('Данное имя уже занято! <a href="/register"> Назад </a>');
@@ -18,7 +22,7 @@ class Auth extends Model
 	}
 
 
-	public static function login($data)
+	static function login($data)
 	{
 		$postData = array();
 
@@ -28,7 +32,7 @@ class Auth extends Model
 		return parent::db()->run('SELECT 1 FROM users WHERE username = ? AND password = ?', $postData)->fetch();
 	}
 
-	public static function logout()
+	static function logout()
     {
         $_SESSION = array();
         $params = session_get_cookie_params();

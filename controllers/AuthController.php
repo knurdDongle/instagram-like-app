@@ -4,6 +4,10 @@ class AuthController
 {
 	public function actionRegister()
 	{
+		if (Functions::logged_in()) {
+			header("Location: /");
+		}
+
 		if (isset($_POST['register'])) {
 			$data = array(
 				'username' => $_POST['username'], 
@@ -21,8 +25,13 @@ class AuthController
 
 		return new View('index/index');
 	}
+	
 	public function actionLogin()
 	{
+		if (Functions::logged_in()) {
+			header("Location: /");
+		}
+
 		if (isset($_POST['login'])) {
 			$data = array(
 				'username' => $_POST['username'],

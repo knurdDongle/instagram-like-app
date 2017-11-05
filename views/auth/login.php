@@ -4,16 +4,17 @@
 	
 	<style>
 		body {	
-			background: #43C6AC;  /* fallback for old browsers */
-			background: -webkit-linear-gradient(to right, #191654, #43C6AC);  /* Chrome 10-25, Safari 5.1-6 */
-			background: linear-gradient(to right, #191654, #43C6AC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-			font-family: 'Open Sans', sans-serif;
+			background-image: radial-gradient(ellipse at 99% -50%, #BD47F2 10%, #0062FF 120%);
+			font-family: 'Heebo', sans-serif;
+			text-transform: uppercase;
 			color: #fff;
+			overflow: hidden;
 		}
 		.div-login {
 			float: none;
 			margin: 0 auto;
-			top:25%;
+			top: 25%;
+			height: 100%;
 		}
 		.form-login {
 			padding-left: 40px;
@@ -33,12 +34,17 @@
 			padding: 10px 20px;
 			background-color: transparent;
 			box-shadow: none;
-			border: 1px solid #fff;
+			border: 1px solid #BD47F2;
 			color: #fff !important;
+			transition: 0.15s;
+		}
+
+		.login_text_input:focus {
+			border-color: #DE9EFB;
 		}
 
 		.login_submit_input {
-			border-color: #fff;
+			border-color: #BD47F2;
 			box-shadow: none;
 			border-radius: 0;
 			height: 35px;
@@ -48,19 +54,23 @@
 			border-top-left-radius: 5px;
 			background-color: transparent;
 			color: #fff !important;
-			transition: 0.2s;
+			transition: 0.15s;
 		}
 
 		.login_submit_input:hover {
-			border-color: #fff;
-			background: #fff;
-			color: #3A6073 !important;
+			border-color: #BD47F2;
+			background: #BD47F2;
+			color: #fff !important;
 		}
 
 		.gramstain {
-			background: #ef32d9;  /* fallback for old browsers */
-			background: -webkit-linear-gradient(to right, #89fffd, #ef32d9);  /* Chrome 10-25, Safari 5.1-6 */
-			background: linear-gradient(to right, #89fffd, #ef32d9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+			background: #C9D6FF;  /* fallback for old browsers */
+			background: -webkit-linear-gradient(to right, #E2E2E2, #C9D6FF);  /* Chrome 10-25, Safari 5.1-6 */
+			background: linear-gradient(to right, #E2E2E2, #C9D6FF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+
+
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
 		}
@@ -68,9 +78,7 @@
 		.under-input {
 			font-size: 0.7em;
 			float: left;
-			top: 27%;
 			z-index: 1000;
-			position: absolute;
 		}
 	</style>
 </head>
@@ -84,9 +92,13 @@
 			</div>
 			<div class="margin-top">
 				<label for="login_text_input" class="under-input">Username or email</label>
-				<input type="text" class="login_text_input" name="username" placeholder="Username or email" required>
+				<input type="text" class="login_text_input" name="username" required>
 			</div>
-			<div class="margin-top"><input type="password" class="login_text_input" name="password" placeholder="Password" required></div>
+			<div class="margin-top">
+				<label for="login_text_input" class="under-input">Password</label>
+				<input type="password" class="login_text_input" name="password"  required>
+			</div>
+
 			<div class="margin-top"><input type="submit" class="form-control login_submit_input" name="login" value="Login"></div>
 		</form>
 	</div>

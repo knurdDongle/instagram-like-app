@@ -15,7 +15,7 @@ class ProfileController
 			$view->assign('subscriber', $subscriber);
 		}
 		else {
-			$view = new View('cabinet/notfound');
+			return new View('cabinet/notfound');
 		}	
 
 		return true;
@@ -48,6 +48,8 @@ class ProfileController
 			$view = new View('photo/index');
 			$view->assign('photoInfo', $photoInfo);
 			$view->assign('photo', $photo);
+		} else {
+			return new View('cabinet/notfound');
 		}
 
 		return true;

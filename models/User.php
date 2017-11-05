@@ -28,7 +28,7 @@ class User extends Model
 
 	static function setUsername(string $username, string $old_username)
 	{
-		return username_exists($username) ? false : parent::db()->run('UPDATE users SET username = ? WHERE username = ?', array($username, $old_username));;
+		return username_exists($username) ? parent::db()->run('UPDATE users SET username = ? WHERE username = ?', array($username, $old_username)) : false;
 	}
 
 	static function getFollowings(string $username)
@@ -107,19 +107,25 @@ class User extends Model
 
 	static function getUsernameById(int $id)
 	{
-		return parent::db()->run('SELECT username FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
+		return parent::db()->run(
+			'SELECT username FROM users WHERE id = ? LIMIT 1', array($id)
+		)->fetchColumn();
 	}
 
 
 	static function getUserId(string $username)
 	{
-		return parent::db()->run('SELECT id FROM users WHERE username = ? LIMIT 1', array($username))->fetchColumn();
+		return parent::db()->run(
+			'SELECT id FROM users WHERE username = ? LIMIT 1', array($username)
+		)->fetchColumn();
 	}
 
 
 	static function getAvatarById(int $id)
 	{
-		return parent::db()->run('SELECT avatar FROM users WHERE id = ? LIMIT 1', array($id))->fetchColumn();
+		return parent::db()->run(
+			'SELECT avatar FROM users WHERE id = ? LIMIT 1', array($id)
+		)->fetchColumn();
 	}
 
 	static function getSubscribed(string $subscriber, string $user)
@@ -136,18 +142,16 @@ class User extends Model
 
 	static function subscribe(string $current_user, string $user)
 	{
-		$user = self::getUserId($user);
-		$subscriber = self::getUserId($current_user);
-
-		return parent::db()->run('INSERT INTO subscribes (id, user, subscriber) VALUES ("", ?, ?)', array($user, $subscriber));
+		return parent::db()->run(
+			'INSERT INTO subscribes (user, subscriber) VALUES (?, ?)', array(self::getUserId($user), self::getUserId($current_user))
+		);
 	}
 
 	static function unsubscribe(string $current_user, string $user)
 	{
-		$user = self::getUserId($user);
-		$subscriber = self::getUserId($current_user);
-
-		return parent::db()->run('DELETE FROM subscribes WHERE user = ? AND subscriber = ?', array($user, $subscriber));
+		return parent::db()->run(
+			'DELETE FROM subscribes WHERE user = ? AND subscriber = ?', array(self::getUserId($user), self::getUserId($current_user))
+		);
 	}
 
 	static function getProfileImages(int $id)
@@ -170,41 +174,54 @@ class User extends Model
 		return $images;
 	}
 
-	static function addImage(string $image, string $username)
-	{
-		if ($user = self::getUserId($username)) {
-			return parent::db()->run('INSERT INTO user_images (image, owner, creation_date) VALUES(?, ?, NOW())', array($image, $user));
-		}
+	static function addImage(string $image)
+	{	
+
+		return parent::db()->run(
+			"INSERT INTO user_images (image, owner, creation_date) VALUES(?, ?, NOW())", array($image, self::getUserId(CURRENT_USER))
+		);
 	}
 
 	static function getPrivateInfo(string $username)
 	{
-		return parent::db()->run('SELECT username, password, email FROM users WHERE username = ?', array($username))->fetch();
+		return parent::db()->run(
+			'SELECT username, password, email FROM users WHERE username = ?', array($username)
+		)->fetch();
 	}
 
 	static function like(int $id)
 	{
-		return parent::db()->run('UPDATE user_images SET likes = likes + 1 WHERE id = ?', array($id));
+		return parent::db()->run(
+			'UPDATE user_images SET likes = likes + 1 WHERE id = ?', array($id)
+		);
 	}
 
 	static function dislike(int $id)
 	{
-
+		return parent::db()->run(
+			'UPDATE user_images SET likes = likes - 1 WHERE id = ?', array($id)
+		);
 	}
 
 	static function getPhoto(string $image)
 	{
-		return parent::db()->run('SELECT likes FROM user_images WHERE image = ?', array($image . '.png'))->fetch();
+		return parent::db()->run(
+			'SELECT likes FROM user_images WHERE image = ?', array($image)
+		)->fetch();
 	}
 
 
 	static function username_exists(string $username)
 	{
-		return parent::db()->run('SELECT 1 FROM users WHERE username = ?', array($username))->fetch();
+		return parent::db()->run(
+			'SELECT 1 FROM users WHERE username = ?', array($username)
+		)->fetch();
 	}
 
 	static function user_exists(string $username, string $email)
 	{
-		return parent::db()->run('SELECT 1 FROM users WHERE username = ? OR email = ?', array($username, $email))->fetch();
+		return parent::db()->run(
+			'SELECT 1 FROM users WHERE username = ? OR email = ?', array($username, $email)
+		)->fetch();
 	}
 }

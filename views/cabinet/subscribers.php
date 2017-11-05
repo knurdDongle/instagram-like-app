@@ -6,15 +6,32 @@
 <link rel="stylesheet" href="../views/templates/style.css">
 
 <style>
-
+	.wrapper {
+		height: auto;
+	}
 	.item-heading {
-		height: 40px;
-		border: 1px solid #ccc;
+		text-align: center;
+		background: #FF9800;
+		font-size: 16px;
+	}
+
+	.item-heading a {
+		color: #fff;
 	}
 
 	.items {
+		height: 100%;
 		padding-left: 100px;
 		padding-right: 100px;
+	}
+
+	.items .item {
+		margin-top: 30px;
+	}
+
+	.btn-option {
+		width: 100%;
+		margin-left: 0;
 	}
 </style>
 </head>
@@ -27,7 +44,9 @@
 			<?php foreach($subscribers as $subscriber): ?>
 				<div class="item col-xs-4">
 					<div class="item-heading">
-						<a href="/<?= $subscriber['username'];?>"><span class="item-username"><?= $subscriber['username']; ?></span></a>
+						<a href="/<?= $subscriber['username'];?>">
+							<span class="item-username">@<?= $subscriber['username']; ?></span>
+						</a>
 					</div>
 					<div class="item-image">
 						<img src="../images/<?= $subscriber['avatar']; ?>" class="img-responsive">

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <?php include(ROOT_PATH . '/views/templates/favicon.html'); ?>
 <link rel="stylesheet" href="views/templates/style.css">
+
 </head>
 
 <body>
@@ -18,7 +19,7 @@
 				<img src="views/templates/default_pic.png" class="profile_pic default_profile_pic">
 			<?php endif; ?>
 			<?php if (!empty($userInfo['profile_info']['avatar'])): ?>
-				<img src="images/<?= $userInfo['avatar']?>" class="profile_pic">
+				<img src="images/<?= $userInfo['profile_info']['avatar']?>" class="profile_pic">
 			<?php endif; ?>
 			</div>
 
@@ -85,7 +86,7 @@
 	
 	<div class="profile_stats col-xs-12 col-sm-6 col-sm-offset-3">
 		<div class="stats_column col-xs-4">
-			<span><?= count($userInfo['images'] > 0); ?></span>
+			<span><?= count($userInfo['images']); ?></span>
 			photos
 		</div>
 
