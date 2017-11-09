@@ -5,19 +5,10 @@ class ActionController
 	function actionSubscribe()
 	{
 		if (Functions::logged_in() && isset($_POST['subscribe'])) {
-			User::subscribe(CURRENT_USER, $_POST['username']);
+			User::doSubscribe($_POST['username']);
+		} else if (Functions::logged_in() && isset($_POST['unsubscribe'])) {
+			User::doUnsubscribe($_POST['username']);
 		}
-
-		header("Location: {$_SERVER['HTTP_REFERER']}");
-
-		return true;
-	}
-
-	function actionUnsubscribe()
-	{
-		if (Functions::logged_in() && isset($_POST['unsubscribe'])) {
-			User::unsubscribe($_SESSION['username'], $_POST['username']);
-		} 
 
 		header("Location: {$_SERVER['HTTP_REFERER']}");
 
@@ -33,14 +24,21 @@ class ActionController
 	        if ($ext != 'png' && $ext != 'jpg' && $ext != 'gif')
 	            die('Недопустимое расширение файла');
 
-	        $path = ROOT_PATH . '/images/';
+	        $dir = substr(md5(microtime()), mt_rand(0, 30), 2) . '/' . substr(md5(microtime()), mt_rand(0, 30), 2);
+	        $path = ROOT_PATH . '/images/' . $dir;
 
-	        $fileName = time();
-	        $filePath = $path . $fileName;
+	        if (!is_dir($path)) {
+	        	mkdir($path, 0700, true);
+	        }
 
-	        if (move_uploaded_file($_FILES['image']['tmp_name'], $filePath)) {
-	        	Functions::imageresize($filePath, $ext);
-                User::addImage($fileName);
+	        $fileName = md5(time() . $_FILES['image']['name']);
+
+	        $fullPath = $path . '/' . $fileName;
+	        $dbPath = $dir . '/' . $fileName;
+			
+			if (move_uploaded_file($_FILES['image']['tmp_name'], $fullPath)) {
+	        	Functions::imageresize($fullPath);
+                User::postImage($dbPath, $fileName);
 	        }
 	    }
 
@@ -51,7 +49,7 @@ class ActionController
 	function actionEdit()
 	{
 		if (Functions::logged_in()) {
-			$userData = User::getPrivateInfo(CURRENT_USER);
+			$userData = User::getSettingsInfo(CURRENT_USER);
 
 			$view = new View('cabinet/edit');
 			$view->assign('userData', $userData);

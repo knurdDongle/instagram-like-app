@@ -9,7 +9,7 @@ class Auth extends Model
 		foreach ($data as $key => $value) 
 			$postData[] = $value;
 
-		$user_exists = User::user_exists($data['username'], $data['email']);
+		$user_exists = User::profile_exists($data['username'], $data['email']);
 
 		if (!$user_exists) {
 			return parent::db()->run(

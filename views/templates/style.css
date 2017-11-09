@@ -1,6 +1,7 @@
 body {
+
 	background-image: radial-gradient(ellipse at 99% -50%, #BD47F2 10%, #0062FF 120%);
-	height: 100%;
+	background-repeat: no-repeat;
 	font-family: 'Open Sans', sans-serif;
 }
 .profile_pic {
@@ -17,10 +18,16 @@ header {
 	position: fixed;
 	height: 75px;
 	width: 100%;
+	top: 0;
 	z-index: 100000;
 	display: block;
 	background-color: #fff;
 	border-bottom: 1px solid #fff;
+}
+
+.wrapper {
+	display: flex;
+	flex-direction: column;
 }
 
 header .menu {
@@ -37,14 +44,16 @@ header .menu a:not(:first-child) {
 	letter-spacing: .06em;
 }
 
-div.wrapper {
-	padding-top: 120px;
+
+div.content {
+	min-height: 100%;
+	padding-top: 140px;
 	margin-left: 50px;
 	margin-right: 50px;
 }
 
 @media screen and (max-width: 692px) {
-	div.wrapper {
+	div.content {
 		margin-left: 0;
 		margin-right: 0;
 	}
@@ -131,6 +140,16 @@ div.stats_column:last-child {
 	width: 300px;
 }
 
+div.photo_content {
+	height: 100vh;
+	margin-top: 300px;
+	margin-bottom: 300px;
+}
+
+div.photos {
+	height: 100%;
+}
+
 div.photos .item {
 	margin-top: 10px;
 	margin-bottom: 20px;
@@ -215,4 +234,82 @@ div.photos .items {
 
 a:hover {
 	text-decoration: none;
+}
+
+.btn-search-friends:hover {
+    background-color: #2286FB;
+}
+
+.footer {
+	max-height: 200px;
+	width: 100%;
+}
+
+.footer-main {
+    color: #fff;
+    background-color: #2C3540;
+}
+
+.content-footer a {
+    color: #fff;
+}
+
+.footer-main .content-footer {
+    color: #fff;
+    padding-left: 10rem;
+    padding-right: 10rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 500;
+}
+
+.block {
+    display: block;
+}
+
+a.blue-3 {
+    color: #0ABCEB;
+    transition: 0.2s;
+}
+
+a.blue-3:hover {
+    color: #fff;
+}
+
+.svg {
+    height: 40px;
+}
+
+.mb-1 {
+    margin-bottom: .25rem;
+}
+
+.tracked {
+    letter-spacing: .05em;
+}
+
+.content-footer .grey-5 {
+    transition: 0.2s;
+    color: #646E7F;
+}
+
+.content-footer .grey-5:hover {
+    color: #798293;
+}
+
+.pr1 {
+    padding-right: 1rem;
+}
+
+.pv8 {
+    padding-top: 8rem;
+}
+
+.db-1 {
+	display: block;
+}
+
+.items_list item:first-child {
+	margin-top: 150px;
 }

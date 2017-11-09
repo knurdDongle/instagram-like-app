@@ -6,7 +6,7 @@
 <body>
 	<?php if (isset($photoInfo)): ?>
 		<div class="col-md-10 col-md-offset-2" style="margin-top: 50px;">
-			<img src="<?= '/images/' . $photo;?>" style="margin-left: 4.07%">
+			<img src="<?= '/images/' . $photoInfo['image'];?>" style="margin-left: 4.07%">
 			<p>
 				<?= $photoInfo['likes'] ?> Likes 
 			</p>

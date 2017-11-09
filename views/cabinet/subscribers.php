@@ -7,7 +7,9 @@
 
 <style>
 	.wrapper {
-		height: auto;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 	.item-heading {
 		text-align: center;
@@ -21,6 +23,7 @@
 
 	.items {
 		height: 100%;
+		padding-top: 100px;
 		padding-left: 100px;
 		padding-right: 100px;
 	}
@@ -28,6 +31,7 @@
 	.items .item {
 		margin-top: 30px;
 	}
+
 
 	.btn-option {
 		width: 100%;
@@ -53,14 +57,14 @@
 					</div>
 					<div class="item-unsubscribe">
 						<div class="btn-option">
-						<?php if ($subscriber['subscribed'] && $_SESSION['username'] != $subscriber['username']): ?>
-							<form action="/unsubscribe" method="post">
+						<?php if ($subscriber['subscribed'] && CURRENT_USER != $subscriber['username']): ?>
+							<form action="/subscribe" method="post">
 								<input type="hidden" name="username" value="<?=$subscriber['username'];?>">
 								<button type="submit" name="unsubscribe" class="col-xs-12 btn-subscribe">Already following</button>
 							</form>
 						<?php endif; ?>
 
-						<?php if (!$subscriber['subscribed'] && $_SESSION['username'] != $subscriber['username']): ?>
+						<?php if (!$subscriber['subscribed'] && CURRENT_USER != $subscriber['username']): ?>
 							<form action="/subscribe" method="post">
 								<input type="hidden" name="username" value="<?=$subscriber['username'];?>">
 								<button type="submit" name="subscribe" class="col-xs-12 btn-subscribe">Follow</button>

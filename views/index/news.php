@@ -13,6 +13,10 @@
 		border: 1px solid #efefef;
 		margin: 0 auto;
 	}
+	
+	.items_list {
+		margin-top: 200px;
+	}
 
 	.item:not(:first-child) {
 		margin-top: 100px;

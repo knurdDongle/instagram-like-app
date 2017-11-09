@@ -7,8 +7,9 @@ class ProfileController
 		$userInfo = array();
 
 		if (User::username_exists($user)) {
-			$userInfo = User::getInfo($user);
-			$subscriber = isset($_SESSION['username']) ? User::getSubscribed($_SESSION['username'], $user) : false;
+			$subscriber = Functions::logged_in() ? (User::isFollowed($user, CURRENT_USER) ? true : false) : null;
+
+			$userInfo = User::getProfile($user);
 
 			$view = new View('cabinet/index');
 			$view->assign('userInfo', $userInfo);
@@ -21,30 +22,12 @@ class ProfileController
 		return true;
 	}
 
-	public function actionApplyEdit()
-	{
-		if (!User::setUsername($_POST['username'], $_POST['old_username'])) {
-			exit("Уже занято! <a href=\"/auth\"> Назад </a>");
-		}
-		else {
-			$_SESSION['username'] = $username;
-		}
-	}
-
-	public function actionRemoveimage()
-	{
-		if (isset($_POST['removephoto'])) {
-			if ($_SESSION['username'] == $_POST['owner']) {
-
-			}
-		}
-	}
 
 	public function actionViewphoto($photo) 
 	{
 		$photoInfo = array();
 
-		if ($photoInfo = User::getPhoto($photo)) {
+		if ($photoInfo = User::getProfileImage($photo)) {
 			$view = new View('photo/index');
 			$view->assign('photoInfo', $photoInfo);
 			$view->assign('photo', $photo);
@@ -57,8 +40,8 @@ class ProfileController
 
 	public function actionFollowing($username)
 	{
-		if (isset($_SESSION['username'])) {
-			$followings = User::getFollowings($username);
+		if (Functions::logged_in()) {
+			$followings = User::getProfileFollowings($username);
 
 			$view = new View('cabinet/followings');
 			$view->assign('followings', $followings);
@@ -72,8 +55,8 @@ class ProfileController
 
 	public function actionSubscribers($username)
 	{
-		if (isset($_SESSION['username'])) {
-			$subscribers = User::getSubscribers($username);
+		if (Functions::logged_in()) {
+			$subscribers = User::getProfileSubscribers($username);
 
 			$view = new View('cabinet/subscribers');
 			$view->assign('subscribers', $subscribers);
@@ -87,7 +70,7 @@ class ProfileController
 
 	public function actionEditpage() {
 		if (Functions::logged_in()) {
-			$userData = User::getPrivateInfo($_SESSION['username']);
+			$userData = User::getSettingsInfo($_SESSION['username']);
 
 			$view = new View('cabinet/edit');
 			$view->assign('userData', $userData);

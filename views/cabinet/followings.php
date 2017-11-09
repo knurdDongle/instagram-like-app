@@ -8,7 +8,7 @@
 <style>
 
 	.wrapper {
-			height: auto;
+			height: 100%;
 		}
 		.item-heading {
 			text-align: center;
@@ -22,6 +22,7 @@
 
 		.items {
 			height: 100%;
+			padding-top: 100px;
 			padding-left: 100px;
 			padding-right: 100px;
 		}
@@ -52,14 +53,14 @@
 					</div>
 					<div class="item-unsubscribe">
 						<div class="btn-option">
-							<?php if ($following['subscribed'] && $_SESSION['username'] != $following['username']): ?>
-								<form action="/unsubscribe" method="post">
+							<?php if ($following['subscribed'] && CURRENT_USER != $following['username']): ?>
+								<form action="/subscribe" method="post">
 									<input type="hidden" name="username" value="<?=$following['username'];?>">
 									<button type="submit" name="unsubscribe" class="col-xs-12 btn-subscribe">Already following</button>
 								</form>
 							<?php endif; ?>
 
-							<?php if (!$following['subscribed'] && $_SESSION['username'] != $following['username']): ?>
+							<?php if (!$following['subscribed'] && CURRENT_USER != $following['username']): ?>
 								<form action="/subscribe" method="post">
 									<input type="hidden" name="username" value="<?=$following['username'];?>">
 									<button type="submit" name="subscribe" class="col-xs-12 btn-subscribe">Follow</button>

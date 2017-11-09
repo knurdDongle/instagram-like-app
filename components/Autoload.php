@@ -10,6 +10,7 @@ function __autoload($class_name)
         '/models/',
         '/components/',
         '/controllers/',
+        '/service/'
     );
 
     foreach ($array_paths as $path) {

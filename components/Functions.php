@@ -2,14 +2,14 @@
 
 class Functions 
 {
-    static function imageresize($img, $extension)
+    static function imageresize($img)
     {
         imagepng(imagecreatefromstring(file_get_contents($img)), $img);
         $size = getimagesize($img);
         $src = imagecreatefrompng($img);
-        $dst = imagecreatetruecolor(800, 800);
+        $dst = imagecreatetruecolor(600, 600);
         imagecopyresampled($dst, $src, 0, 0, 0, 0, 800, 800, $size[0], $size[1]);
-        imagepng($dst, $img, 0);
+        imagejpeg($dst, $img, 80);
         imagedestroy($src);
     }  
 
@@ -54,6 +54,6 @@ class Functions
 
     static function get_current_session_user() 
     {
-        return isset($_SESSION['username']) ? $_SESSION['username'] : null;
+        return !empty($_SESSION['username']) ? $_SESSION['username'] : null;
     }
 }
